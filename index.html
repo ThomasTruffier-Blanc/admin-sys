@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail de Révision Ultime - Admin Sys 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Animations pour les onglets de navigation principaux */
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        
+        /* Animations pour les sous-onglets Cours/Quiz */
+        .mode-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .mode-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Style spécifique pour les Flashcards (details/summary) */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.3s ease-in-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Styles typographiques pour la partie Cours */
+        .cours-text h2 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .cours-text h3 { font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .cours-text p { margin-bottom: 1rem; color: #475569; line-height: 1.6; }
+        .cours-text ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; color: #475569; }
+        .cours-text li { margin-bottom: 0.5rem; }
+        .cours-text code { background-color: #f1f5f9; color: #b91c1c; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; }
+        .card { background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #f1f5f9; }
+    </style>
+</head>
+<body class="bg-slate-50 flex flex-col md:flex-row min-h-screen font-sans antialiased text-slate-800">
+
+    <!-- Sidebar Navigation -->
+    <nav class="bg-slate-900 text-white w-full md:w-72 md:fixed h-auto md:h-screen flex flex-col shadow-xl z-20">
+        <div class="p-6 text-center border-b border-slate-700">
+            <h1 class="text-2xl font-bold tracking-tight text-indigo-400">Admin Sys 2</h1>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Cours & Entraînement</p>
+        </div>
+        <ul class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto flex-1 p-4 gap-2 scrollbar-hide">
+            <li><button class="nav-btn active w-full text-left px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium transition-colors flex items-center justify-between" data-target="windows"><span>💻 Intro & Windows</span></button></li>
+            <li><button class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 font-medium transition-colors flex items-center justify-between" data-target="linux"><span>🐧 Système Linux</span></button></li>
+            <li><button class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 font-medium transition-colors flex items-center justify-between" data-target="donnees"><span>💾 Données & RAID</span></button></li>
+            <li><button class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 font-medium transition-colors flex items-center justify-between" data-target="virtu"><span>🐳 Virtualisation</span></button></li>
+            <li><button class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 text-slate-300 font-medium transition-colors flex items-center justify-between" data-target="td"><span>🛠️ Travaux Pratiques</span></button></li>
+        </ul>
+        <div class="p-4 border-t border-slate-700 text-center text-xs text-slate-500 hidden md:block">
+            IUT R&T - Année 2024-2025
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 md:ml-72 p-4 md:p-8 lg:p-12 max-w-5xl mx-auto w-full">
+
+        <!-- ================= MODULE 1: WINDOWS ================= -->
+        <section id="windows" class="tab-content active">
+            <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end border-b pb-4">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-slate-900 mb-2">💻 Bases & Windows</h1>
+                    <p class="text-slate-500">Rôle de l'OS, Gestion Windows, AD et Supervision.</p>
+                </div>
+                <!-- Sélecteur Cours / Quiz -->
+                <div class="mt-4 md:mt-0 flex space-x-2 bg-slate-200 p-1 rounded-lg">
+                    <button class="mode-btn active px-4 py-2 rounded-md font-medium text-sm transition-all shadow-sm bg-white text-indigo-600" data-mode="cours" data-parent="windows">📖 Lire le Cours</button>
+                    <button class="mode-btn px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-300" data-mode="quiz" data-parent="windows">🧠 Flashcards (10)</button>
+                </div>
+            </div>
+
+            <!-- CONTENU DU COURS -->
+            <div id="windows-cours" class="mode-content active cours-text">
+                <div class="card">
+                    <h2>1. Rôle du Système d'Exploitation (OS)</h2>
+                    <p>L'OS est le logiciel qui fait le lien entre les ressources matérielles et les logiciels. Il gère l'exécution des applicatifs, le dialogue avec les périphériques via les pilotes, et fournit une interface utilisateur.</p>
+                    <ul>
+                        <li><strong>Systèmes préemptifs :</strong> L'OS gère les temps d'exécution et l'accès aux ressources via un ordonnanceur. Les programmes sont exécutés tour à tour rapidement (illusion d'exécution parallèle).</li>
+                        <li><strong>Gestion de la mémoire :</strong> Les programmes sont chargés en mémoire vive (RAM). En cas de manque, le système utilise la mémoire virtuelle (swap), ce qui ralentit la machine.</li>
+                        <li><strong>Licences :</strong> Il existe des systèmes libres (liberté d'étudier, modifier, redistribuer) et des systèmes propriétaires (soumis à un CLUF).</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>2. Gestion sous Windows (Disques & Utilisateurs)</h2>
+                    <h3>Utilisateurs et Groupes</h3>
+                    <p>La gestion permet de sécuriser l'accès. Un utilisateur peut appartenir à plusieurs groupes. On peut utiliser l'interface graphique (Gestion de l'ordinateur) ou Powershell :</p>
+                    <ul>
+                        <li><code>New-LocalUser</code>, <code>Set-LocalUser</code>, <code>Remove-LocalUser</code></li>
+                        <li><code>New-LocalGroup</code>, <code>Add-LocalGroupMember</code>, <code>Get-LocalGroupMember</code></li>
+                    </ul>
+                    <h3>Disques et Droits NTFS</h3>
+                    <p>Les partitions peuvent être en FAT32, exFAT ou NTFS. Le NTFS est indispensable pour la sécurité avancée :</p>
+                    <ul>
+                        <li><strong>Lecture :</strong> Lire le contenu et les permissions.</li>
+                        <li><strong>Écriture :</strong> Créer/modifier des fichiers mais sans changer les droits.</li>
+                        <li><strong>Modification :</strong> Lecture + Écriture + Droit d'effacer.</li>
+                        <li><strong>Contrôle total :</strong> Toutes permissions, y compris changer le propriétaire et les droits.</li>
+                    </ul>
+                    <h3>Quotas de disques</h3>
+                    <p>Ils permettent d'éviter la saturation d'un disque par un utilisateur en limitant l'espace utilisable sur une partition NTFS (avec seuil d'avertissement et limite stricte).</p>
+                </div>
+
+                <div class="card">
+                    <h2>3. Active Directory (AD) et Supervision</h2>
+                    <p><strong>Active Directory</strong> est un service d'annuaire (ex: iut.local) reposant sur des Contrôleurs de domaine. Il s'organise avec des Unités Organisationnelles (conteneurs) et des objets feuilles (Utilisateurs, Ordinateurs).</p>
+                    <p>Les <strong>GPO (Stratégies de groupes)</strong> permettent d'appliquer des paramètres centraux à tout le parc (ex: forcer un fond d'écran, politique de mots de passe complexe).</p>
+                    
+                    <h3>Outils de Supervision Windows</h3>
+                    <ul>
+                        <li><strong>Gestionnaire de tâches :</strong> Vue rapide des processus, CPU, RAM.</li>
+                        <li><strong>Moniteur de ressources :</strong> Vue très détaillée des accès disque (E/S) ou réseau par processus.</li>
+                        <li><strong>Analyseur de performances :</strong> Pour créer des graphiques historiques précis.</li>
+                        <li><strong>Observateur d'événements :</strong> Contient les Logs (Critique, Erreur, Avertissement, Info).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CONTENU DU QUIZ / FLASHCARDS -->
+            <div id="windows-quiz" class="mode-content">
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded-r-lg">
+                    <p class="text-sm text-indigo-800"><strong>Instructions :</strong> Lisez la question, répondez mentalement, puis cliquez pour vérifier votre réponse.</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quel est le rôle principal d'un Système d'Exploitation (OS) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Il fait le lien entre le matériel et les logiciels, gère les processus, la mémoire, dialogue avec les périphériques via des pilotes et fournit une interface utilisateur.</div>
+                    </details>
+                    
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que signifie un système "préemptif" ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">C'est l'OS (via l'ordonnanceur) qui décide de la répartition du temps d'exécution des processus et gère l'accès aux ressources partagées, pour éviter les blocages.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Qu'est-ce que la mémoire virtuelle (swap) et quel est son inconvénient ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">C'est un espace sur le disque dur utilisé par l'OS lorsque la mémoire vive (RAM) est saturée. Son inconvénient est qu'elle ralentit considérablement la machine (le disque étant plus lent que la RAM).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Donnez la commande Powershell pour lister les membres d'un groupe local.
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><code>Get-LocalGroupMember</code></div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Sous NTFS, quelle est la différence entre "Modification" et "Contrôle total" ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">"Modification" permet de lire, écrire et effacer. "Contrôle total" permet en plus de prendre possession du fichier et de changer ses droits d'accès (permissions).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            De quoi est composé l'Active Directory (AD) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">De Contrôleurs de domaine (serveurs), d'Unités Organisationnelles (OU - des conteneurs), et d'Objets feuilles (Utilisateurs, Ordinateurs, Groupes).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que sont les GPO et à quoi servent-elles ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Les Group Policy Objects (Stratégies de groupe) permettent d'appliquer des paramètres d'administration et de sécurité de manière centralisée (ex: politique de mots de passe, déploiement logiciel).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quel outil Windows permet de voir les événements critiques, erreurs et informations du système ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">L'Observateur d'événements (Event Viewer), qui gère les journaux système (Logs).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            À quoi servent les quotas de disques ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">À éviter la saturation d'un disque en limitant l'espace utilisable par un ou plusieurs utilisateurs (possible uniquement sur NTFS).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quel outil utiliser pour savoir exactement quel processus est en train d'écrire massivement sur le disque dur en temps réel ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Le Moniteur de ressources (Resource Monitor), qui est plus précis que le simple Gestionnaire de tâches.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 2: LINUX ================= -->
+        <section id="linux" class="tab-content">
+            <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end border-b pb-4">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-slate-900 mb-2">🐧 Système Linux</h1>
+                    <p class="text-slate-500">Arborescence, Utilisateurs, CLI, Runlevels.</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-2 bg-slate-200 p-1 rounded-lg">
+                    <button class="mode-btn active px-4 py-2 rounded-md font-medium text-sm transition-all shadow-sm bg-white text-indigo-600" data-mode="cours" data-parent="linux">📖 Lire le Cours</button>
+                    <button class="mode-btn px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-300" data-mode="quiz" data-parent="linux">🧠 Flashcards (12)</button>
+                </div>
+            </div>
+
+            <!-- CONTENU DU COURS -->
+            <div id="linux-cours" class="mode-content active cours-text">
+                <div class="card">
+                    <h2>1. Utilisateurs, Groupes et Sécurité</h2>
+                    <p>La gestion s'effectue avec <code>addgroup</code>, <code>adduser</code>, <code>usermod</code>, <code>userdel</code>. Pour l'authentification centralisée on utilise généralement <strong>OpenLDAP</strong> ou <strong>Samba</strong>.</p>
+                    <h3>Le système Shadow</h3>
+                    <p>Historiquement, les mots de passe (hashés en MD5) étaient dans <code>/etc/passwd</code>. Problème : ce fichier doit être lisible par tous pour le bon fonctionnement des services. La méthode <strong>shadow</strong> déplace les mots de passe :</p>
+                    <ul>
+                        <li><code>/etc/passwd</code> : Infos compte (login, uid, gid, home, shell). Lisible par tous.</li>
+                        <li><code>/etc/shadow</code> : Mots de passe hashés et dates d'expiration. Lisible uniquement par <em>root</em> et le groupe <em>shadow</em>.</li>
+                    </ul>
+                    <p>Commandes liées : <code>pwconv</code> (active shadow), <code>pwunconv</code> (désactive), <code>passwd -e</code> (force l'expiration).</p>
+                </div>
+
+                <div class="card">
+                    <h2>2. Arborescence, Partitions et LVM</h2>
+                    <h3>Arborescence standard</h3>
+                    <ul class="grid grid-cols-2 gap-2 text-sm">
+                        <li><strong>/bin & /sbin :</strong> Exécutables / Commandes.</li>
+                        <li><strong>/etc :</strong> Fichiers de configuration.</li>
+                        <li><strong>/home :</strong> Dossiers personnels.</li>
+                        <li><strong>/var :</strong> Logs, mails (fichiers variables).</li>
+                        <li><strong>/dev :</strong> Périphériques (ex: /dev/sda).</li>
+                        <li><strong>/mnt :</strong> Points de montage.</li>
+                    </ul>
+
+                    <h3>Montage et LVM</h3>
+                    <p>Le montage manuel se fait avec <code>mount</code>. Le fichier <strong><code>/etc/fstab</code></strong> gère le montage automatique au démarrage.</p>
+                    <p><strong>LVM (Logical Volume Manager)</strong> assouplit la gestion : les disques physiques (<strong>PV</strong>) sont réunis dans un grand groupe (<strong>VG</strong>), puis découpés en partitions logiques redimensionnables (<strong>LV</strong>).</p>
+                </div>
+
+                <div class="card">
+                    <h2>3. Processus et Runlevels</h2>
+                    <ul>
+                        <li><strong>Runlevels :</strong> 0 (Arrêt), 1 (Monoutilisateur), 2-5 (Multiutilisateurs), 6 (Redémarrage). Fichiers stockés dans /etc/rc.d/ avec S (Start) et K (Kill).</li>
+                        <li><strong>Processus :</strong> <code>ps aux</code> (liste complète), <code>top</code> (temps réel CPU/RAM).</li>
+                        <li><strong>Kill :</strong> <code>kill -15 PID</code> (arrêt propre/SIGTERM), <code>kill -9 PID</code> (arrêt brutal/SIGKILL).</li>
+                    </ul>
+                </div>
+
+                <div class="card bg-slate-900 text-slate-300">
+                    <h2 class="text-white border-slate-700">📌 Aide-mémoire Commandes</h2>
+                    <ul class="font-mono text-sm">
+                        <li><code>ls -la</code> : Liste format long + cachés</li>
+                        <li><code>ln -s cible lien</code> : Crée un lien symbolique</li>
+                        <li><code>df -h</code> / <code>du -h</code> : Espace libre du disque / Espace utilisé d'un dossier</li>
+                        <li><code>find / -name "*.txt"</code> : Cherche un fichier</li>
+                        <li><code>grep -i "motif" fichier</code> : Cherche du texte</li>
+                        <li><code>free</code> / <code>vmstat</code> : Mémoire / Swap</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CONTENU DU QUIZ / FLASHCARDS -->
+            <div id="linux-quiz" class="mode-content">
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded-r-lg">
+                    <p class="text-sm text-indigo-800"><strong>Instructions :</strong> Testez vos connaissances sur les commandes et concepts Linux.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle est la différence fondamentale entre /etc/passwd et /etc/shadow ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><code>/etc/passwd</code> contient les infos publiques des utilisateurs (UID, GID, home) et est lisible par tous. <code>/etc/shadow</code> contient les mots de passe hashés et est uniquement lisible par root.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Dans quel dossier Linux trouve-t-on les fichiers de configuration ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Dans le dossier <code>/etc</code>.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            À quoi sert le fichier /etc/fstab ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Il sert à configurer le montage automatique des partitions (systèmes de fichiers) au démarrage du système.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que signifient les acronymes PV, VG et LV dans le système LVM ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><strong>PV</strong> = Physical Volume (disque physique), <strong>VG</strong> = Volume Group (grappe de disques concaténés), <strong>LV</strong> = Logical Volume (partition logique découpée dans le VG).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que fait un "Runlevel 0" et un "Runlevel 6" ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Le Runlevel 0 correspond à l'arrêt du système (Halt). Le Runlevel 6 correspond au redémarrage (Reboot).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle est la différence entre "kill -15" et "kill -9" ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><code>kill -15</code> (SIGTERM) demande une fermeture propre du processus. <code>kill -9</code> (SIGKILL) force la fermeture immédiate (brutale) du processus.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle commande permet d'afficher les processus en temps réel avec l'utilisation CPU/RAM ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">La commande <code>top</code>.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            À quoi servent les commandes "df -h" et "du -h" ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><code>df -h</code> affiche l'espace libre des partitions montées. <code>du -h</code> affiche l'espace occupé (taille) d'un dossier et de ses sous-dossiers.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Comment rechercher un texte à l'intérieur de plusieurs fichiers ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Avec la commande <code>grep</code> (ex: <code>grep -i "motif" fichier</code>).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Dans quel dossier trouve-t-on les journaux système (Logs) sous Linux ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Dans le dossier <code>/var/log</code> (ex: auth.log, syslog).</div>
+                    </details>
+                    
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle commande crée un lien symbolique (raccourci) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">La commande <code>ln -s fichier_cible nom_du_lien</code>.</div>
+                    </details>
+                    
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelles sont les options pour ajouter des quotas sur un filesystem (dans fstab) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Il faut ajouter les options <code>usrquota</code> (pour les utilisateurs) et <code>grpquota</code> (pour les groupes) dans le fichier <code>/etc/fstab</code>.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 3: DONNEES & RAID ================= -->
+        <section id="donnees" class="tab-content">
+            <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end border-b pb-4">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-slate-900 mb-2">💾 Données & RAID</h1>
+                    <p class="text-slate-500">Architecture RAID, Sauvegardes et Cryptographie.</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-2 bg-slate-200 p-1 rounded-lg">
+                    <button class="mode-btn active px-4 py-2 rounded-md font-medium text-sm transition-all shadow-sm bg-white text-indigo-600" data-mode="cours" data-parent="donnees">📖 Lire le Cours</button>
+                    <button class="mode-btn px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-300" data-mode="quiz" data-parent="donnees">🧠 Flashcards (10)</button>
+                </div>
+            </div>
+
+            <!-- CONTENU DU COURS -->
+            <div id="donnees-cours" class="mode-content active cours-text">
+                <div class="card">
+                    <h2>1. Le RAID (Redundant Array of Independent Disks)</h2>
+                    <p>Le RAID sert à répartir les données sur plusieurs disques pour améliorer la tolérance aux pannes (redondance) et/ou les performances (vitesse).</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                            <h3 class="mt-0">RAID 0 (Striping)</h3>
+                            <p class="text-sm">Minimum 2 disques. Entrelacement des données. <strong>Performance maximale</strong>. Aucune sécurité : si 1 disque lâche, TOUT est perdu.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                            <h3 class="mt-0">RAID 1 (Mirroring)</h3>
+                            <p class="text-sm">Minimum 2 disques. Les données sont copiées à l'identique. <strong>Très haute fiabilité</strong>. Capacité = taille du plus petit disque (coûteux).</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                            <h3 class="mt-0">RAID 5 (Striping + Parité)</h3>
+                            <p class="text-sm">Minimum 3 disques. Allie performance et sécurité grâce à un calcul de parité XOR. 1 seul disque peut tomber en panne sans perte. Capacité perdue = 1 disque.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                            <h3 class="mt-0">RAID Combinés (0+1 / 1+0)</h3>
+                            <p class="text-sm">RAID 0+1 : 2 grappes RAID 0 montées en miroir (RAID 1).<br>RAID 1+0 : Plusieurs miroirs RAID 1 montés en RAID 0.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-6">RAID Logiciel vs Matériel</h3>
+                    <ul>
+                        <li><strong>Logiciel :</strong> Géré par l'OS. Pas de surcoût, mais consomme du CPU et dépend de l'OS.</li>
+                        <li><strong>Matériel :</strong> Contrôleur dédié (carte). Très performant, transparent pour l'OS, gère le Hotplug (remplacement à chaud) et le Hotspare (disque de secours dormant). Inconvénient : coûteux, si la carte grille, il faut la même.</li>
+                    </ul>
+                    <p class="text-red-600 font-bold mt-2">Attention : Le RAID n'est PAS une sauvegarde (il ne protège pas contre l'erreur humaine, le vol ou l'incendie).</p>
+                </div>
+
+                <div class="card">
+                    <h2>2. Sauvegardes</h2>
+                    <ul>
+                        <li><strong>Complète :</strong> Copie absolue de tout (très lourd).</li>
+                        <li><strong>Différentielle :</strong> Sauvegarde tout ce qui a changé <em>depuis la dernière sauvegarde complète</em>.</li>
+                        <li><strong>Incrémentale :</strong> Sauvegarde uniquement ce qui a changé <em>depuis la toute dernière sauvegarde (complète ou incrémentale)</em>.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>3. Chiffrement (Cryptographie)</h2>
+                    <ul>
+                        <li><strong>Symétrique (Clé privée) :</strong> Une seule clé secrète sert à chiffrer ET déchiffrer. Très rapide. (Algorithmes : AES, DES, 3DES).</li>
+                        <li><strong>Asymétrique (Clé publique/privée) :</strong> Une clé publique chiffre (diffusable à tous), une clé privée déchiffre (secrète). Plus lent, très sécurisé pour internet. (Algorithmes : RSA).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CONTENU DU QUIZ / FLASHCARDS -->
+            <div id="donnees-quiz" class="mode-content">
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded-r-lg">
+                    <p class="text-sm text-indigo-800"><strong>Instructions :</strong> Testez vos connaissances sur l'architecture de stockage et la sécurité.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que signifie l'acronyme RAID ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Redundant Array of Independent Disks (Matrice redondante de disques indépendants).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quel est le principe et le défaut majeur du RAID 0 ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Principe : Agrégation par bandes (Striping) pour une performance maximale. Défaut : Aucune sécurité, la perte d'un disque détruit toute la grappe.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Comment fonctionne le RAID 1 et quel est son impact sur la capacité ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Principe : Mode Miroir (données identiques sur tous les disques). Capacité : On perd l'espace équivalent à tous les disques miroirs (la capacité utile est celle du plus petit disque).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Combien de disques au minimum faut-il pour un RAID 5 et combien peuvent tomber en panne ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Minimum 3 disques. 1 seul disque peut tomber en panne sans perte de données (grâce à la parité XOR).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Qu'est-ce que la fonction "Hotspare" sur un contrôleur RAID matériel ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">C'est un disque installé en supplément qui reste "dormant". Il est automatiquement utilisé par le contrôleur pour reconstruire la grappe si un autre disque tombe en panne.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Pourquoi le RAID n'est-il PAS considéré comme une sauvegarde ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Parce qu'il ne protège ni contre les erreurs humaines (suppression d'un fichier, synchronisée immédiatement en RAID), ni contre les virus (Ransomware), ni contre les désastres physiques (vol, incendie du serveur).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle est la différence entre une sauvegarde différentielle et incrémentale ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><strong>Différentielle :</strong> sauvegarde ce qui a changé depuis la dernière complète. <strong>Incrémentale :</strong> sauvegarde ce qui a changé depuis la toute dernière sauvegarde (complète ou incrémentale).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Comment fonctionne le chiffrement symétrique et donnez un exemple d'algorithme.
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Il utilise une SEULE et même clé pour chiffrer et déchiffrer (clé privée). Exemple : AES, DES, 3DES.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Comment fonctionne le chiffrement asymétrique et donnez un exemple d'algorithme.
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Il utilise deux clés liées : une clé Publique pour chiffrer, et une clé Privée (secrète) pour déchiffrer. Exemple : RSA.</div>
+                    </details>
+                    
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Qu'est-ce qu'un NAS ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Network Attached Storage. C'est un boîtier de stockage autonome relié au réseau, souvent configuré en RAID, utilisé pour les sauvegardes ou le partage de fichiers.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 4: VIRTU ================= -->
+        <section id="virtu" class="tab-content">
+            <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end border-b pb-4">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-slate-900 mb-2">🐳 Virtualisation & Conteneurs</h1>
+                    <p class="text-slate-500">Hyperviseurs, Réseaux Virtuels et Docker.</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-2 bg-slate-200 p-1 rounded-lg">
+                    <button class="mode-btn active px-4 py-2 rounded-md font-medium text-sm transition-all shadow-sm bg-white text-indigo-600" data-mode="cours" data-parent="virtu">📖 Lire le Cours</button>
+                    <button class="mode-btn px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-300" data-mode="quiz" data-parent="virtu">🧠 Flashcards (10)</button>
+                </div>
+            </div>
+
+            <!-- CONTENU DU COURS -->
+            <div id="virtu-cours" class="mode-content active cours-text">
+                <div class="card">
+                    <h2>1. Hyperviseurs et Concepts</h2>
+                    <p>La virtualisation permet de faire fonctionner plusieurs systèmes (Machine Virtuelle - VM) sur une même machine physique. Avantages : économies, snapshots (captures instantanées), flexibilité.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="border-l-4 border-blue-500 pl-4 py-2">
+                            <h3 class="mt-0">Type 1 (Bare Metal)</h3>
+                            <p class="text-sm">Installé directement sur le matériel (pas d'OS lourd en dessous). Très performant, idéal serveurs prod.</p>
+                            <p class="text-sm font-semibold mt-1">Ex: VMWare ESXi, Proxmox, Xen.</p>
+                        </div>
+                        <div class="border-l-4 border-emerald-500 pl-4 py-2">
+                            <h3 class="mt-0">Type 2 (Hébergé)</h3>
+                            <p class="text-sm">Installé COMME un logiciel sur un OS hôte (Windows/Linux). Partage les ressources avec l'OS hôte.</p>
+                            <p class="text-sm font-semibold mt-1">Ex: VMWare Workstation, VirtualBox.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>2. Réseaux Virtuels (Modes)</h2>
+                    <ul>
+                        <li><strong>NAT :</strong> Le logiciel de virtualisation fait routeur. Les VMs ont internet mais sont dans un sous-réseau privé invisible de l'extérieur.</li>
+                        <li><strong>Pont (Bridge) :</strong> Les VMs sont virtuellement branchées sur le switch physique réel. Elles ont une IP locale (ex: box internet) et sont visibles sur le réseau.</li>
+                        <li><strong>Privé (Host-only) :</strong> Réseau totalement clos entre les VMs et l'hôte. Pas d'internet. Parfait pour les tests sécurisés.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>3. Conteneurisation (Virtualisation Légère)</h2>
+                    <p>Contrairement aux VMs qui émulent le matériel et bootent un OS complet, le <strong>conteneur</strong> partage le NOYAU de l'OS hôte. C'est ultra-léger et rapide.</p>
+                    <ul>
+                        <li><strong>LXC (Linux Containers) & Cgroups :</strong> Technologies natives du noyau Linux permettant d'isoler des processus et limiter leurs ressources matérielles.</li>
+                        <li><strong>Docker :</strong> Plateforme la plus connue.
+                            <ul>
+                                <li><strong>Image :</strong> Fichier en lecture seule contenant l'app et ses dépendances (le "moule").</li>
+                                <li><strong>Conteneur :</strong> Une instance vivante de l'image.</li>
+                                <li><strong>Volume :</strong> Stockage persistant sur l'hôte pour ne pas perdre les données du conteneur.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CONTENU DU QUIZ / FLASHCARDS -->
+            <div id="virtu-quiz" class="mode-content">
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded-r-lg">
+                    <p class="text-sm text-indigo-800"><strong>Instructions :</strong> Maîtrisez les concepts de virtualisation, les types d'hyperviseurs et Docker.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle est la différence entre un hyperviseur de Type 1 et de Type 2 ? Citez des exemples.
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><strong>Type 1 (Bare Metal) :</strong> S'installe directement sur le matériel (très performant). <em>Ex: VMWare ESXi, Proxmox.</em><br><strong>Type 2 (Hébergé) :</strong> S'installe comme un logiciel sur un OS hôte existant (partage les ressources). <em>Ex: VirtualBox, VMWare Workstation.</em></div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Comment fonctionne le mode réseau NAT pour une Machine Virtuelle ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">La VM est dans un réseau privé virtuel. L'hyperviseur fait office de passerelle/routeur (NAT) pour lui donner accès à Internet, mais la VM reste invisible depuis le réseau local physique.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Comment fonctionne le mode réseau Pont (Bridge) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">La VM est virtuellement branchée sur le même switch que l'ordinateur hôte. Elle obtient sa propre adresse IP sur le réseau local réel (ex: via la box internet) et communique comme une vraie machine.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que signifient les acronymes P2V et V2V ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><strong>P2V :</strong> Physical to Virtual (convertir un vieux serveur physique en machine virtuelle).<br><strong>V2V :</strong> Virtual to Virtual (migrer une VM d'un hyperviseur à un autre).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Qu'est-ce qu'un "Snapshot" (Capture instantanée) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">C'est une "photo" de l'état exact de la machine virtuelle (disque et RAM) à un instant T, permettant d'y revenir très facilement en cas d'erreur.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle est la différence fondamentale entre une Machine Virtuelle (VM) et un Conteneur (ex: Docker) ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Une VM émule tout le matériel et fait tourner un OS complet (lourd). Un Conteneur ne virtualise pas le matériel, il partage le NOYAU de l'OS hôte et n'embarque que son application (très léger et rapide).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelles technologies Linux sont à la base de la conteneurisation ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><strong>LXC (Linux Containers)</strong> pour l'isolation des processus, et les <strong>Cgroups</strong> pour limiter les ressources matérielles (CPU, RAM).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Dans Docker, qu'est-ce qu'une Image et qu'est-ce qu'un Conteneur ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Une <strong>Image</strong> est un fichier immuable contenant l'application (le moule). Un <strong>Conteneur</strong> est une instance vivante et en exécution de cette image.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            À quoi sert un "Volume" dans Docker ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Les conteneurs sont éphémères (leurs données sont perdues s'ils sont supprimés). Un Volume permet de lier un dossier de la machine hôte au conteneur pour y stocker les données de façon permanente (persistance).</div>
+                    </details>
+                    
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Sur quel système d'exploitation le logiciel Proxmox est-il basé ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Proxmox est basé sur une distribution Linux <strong>Debian</strong> et utilise l'hyperviseur KVM.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 5: TD ================= -->
+        <section id="td" class="tab-content">
+            <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end border-b pb-4">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-slate-900 mb-2">🛠️ Travaux Pratiques</h1>
+                    <p class="text-slate-500">Mise en pratique Windows & Linux.</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-2 bg-slate-200 p-1 rounded-lg">
+                    <button class="mode-btn active px-4 py-2 rounded-md font-medium text-sm transition-all shadow-sm bg-white text-indigo-600" data-mode="cours" data-parent="td">📖 Lire le Cours</button>
+                    <button class="mode-btn px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-300" data-mode="quiz" data-parent="td">🧠 Flashcards (6)</button>
+                </div>
+            </div>
+
+            <!-- CONTENU DU COURS -->
+            <div id="td-cours" class="mode-content active cours-text">
+                <div class="card">
+                    <h2>Résumé du TD 1 - Windows</h2>
+                    <ul>
+                        <li><strong>Groupes et Utilisateurs :</strong> Création via l'interface et via Powershell. Configuration de règles (le MDP n'expire jamais, forcer le changement à la 1ere connexion).</li>
+                        <li><strong>Sécurité NTFS :</strong> Gérer l'accès aux dossiers (Direction, RH, Confidentiel, Public) via l'onglet Sécurité. Différencier l'héritage des droits.</li>
+                        <li><strong>Partage réseau :</strong> Créer un dossier "Partage" et configurer les droits de partage (différents des droits NTFS) pour échanger avec d'autres machines.</li>
+                        <li><strong>Quotas :</strong> Activer les quotas sur le disque C:, mettre des limites globales et configurer des exceptions pour des utilisateurs spécifiques.</li>
+                        <li><strong>RAID sous Windows :</strong> Depuis la gestion des disques (Disques Dynamiques), configurer des grappes RAID 0 (Agrégé par bandes), RAID 1 (Miroir) et RAID 5 avec plusieurs disques virtuels.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>Résumé du TD 2 - Linux</h2>
+                    <ul>
+                        <li><strong>CLI Utilisateurs :</strong> Découverte du manuel (<code>man</code>). Utilisation de <code>addgroup --gid</code> et <code>adduser --uid --ingroup</code>.</li>
+                        <li><strong>Fichiers système :</strong> Vérification de la création dans <code>/etc/group</code> et <code>/etc/passwd</code>.</li>
+                        <li><strong>Droits (rwx) :</strong> Compréhension des droits Read/Write/eXecute. Modification du propriétaire avec <code>chown</code> et du groupe avec <code>chgrp</code> (ou <code>chown user:group</code>). Application via <code>chmod</code>.</li>
+                        <li><strong>Shadow :</strong> Activation/Désactivation du hachage des mots de passe avec <code>pwconv</code> et <code>pwunconv</code> pour observer l'impact sur le fichier passwd.</li>
+                        <li><strong>Quotas Linux :</strong> Activation des quotas sur la partition racine <code>/</code>, limitation en espace disque et en nombre d'inodes (fichiers).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CONTENU DU QUIZ / FLASHCARDS -->
+            <div id="td-quiz" class="mode-content">
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded-r-lg">
+                    <p class="text-sm text-indigo-800"><strong>Instructions :</strong> Testez vos commandes et réflexes acquis lors des séances de Travaux Pratiques.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Sous Windows, quelles sont les deux couches de permissions à vérifier lors d'un accès par le réseau à un dossier ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Il faut vérifier les <strong>Permissions de Partage</strong> (qui gèrent l'accès réseau) ET les <strong>Permissions NTFS</strong> (onglet Sécurité, qui gèrent l'accès local au disque). La permission la plus restrictive l'emporte.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Sous Windows, pour faire du RAID logiciel, en quoi doit-on convertir les disques de base ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Dans le gestionnaire des disques, il faut convertir les disques "De base" en disques <strong>"Dynamiques"</strong>.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle commande Linux permet de modifier le propriétaire d'un fichier ou d'un dossier ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">La commande <code>chown</code> (CHange OWNer). Exemple : <code>chown pierre document.txt</code>.</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que signifient les droits "rwx" sous Linux ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white"><strong>r</strong> = Read (Lecture). <strong>w</strong> = Write (Écriture). <strong>x</strong> = eXecute (Exécution). (Pour un dossier, 'x' permet de le traverser / d'y entrer).</div>
+                    </details>
+
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Que se passe-t-il si vous tapez <code>pwunconv</code> sous Linux ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">Le système de "Shadow password" est désactivé. Les mots de passe hashés retournent dans le fichier <code>/etc/passwd</code>, ce qui est une grosse faille de sécurité.</div>
+                    </details>
+                    
+                    <details class="group bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <summary class="cursor-pointer p-5 font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 flex justify-between items-center">
+                            Quelle commande Linux permet d'afficher le manuel d'une autre commande ?
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 text-slate-600 bg-white">La commande <code>man</code> suivie de la commande cherchée (ex: <code>man adduser</code>).</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.tab-content');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+
+            // --- 1. Gestion de la navigation latérale (Modules) ---
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Désactiver tous les boutons de nav
+                    navButtons.forEach(b => {
+                        b.classList.remove('active', 'bg-indigo-600', 'text-white');
+                        b.classList.add('hover:bg-slate-800', 'text-slate-300');
+                    });
+                    sections.forEach(s => s.classList.remove('active'));
+
+                    // Activer le bouton cliqué
+                    btn.classList.add('active', 'bg-indigo-600', 'text-white');
+                    btn.classList.remove('hover:bg-slate-800', 'text-slate-300');
+                    
+                    const targetId = btn.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+
+                    // Animation scroll mobile
+                    if(window.innerWidth < 768) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // --- 2. Gestion de la bascule Cours / Quiz dans chaque module ---
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const mode = btn.getAttribute('data-mode'); // 'cours' ou 'quiz'
+                    const parentSectionId = btn.getAttribute('data-parent'); // ex: 'windows'
+                    
+                    // Récupérer les boutons de cette section
+                    const sectionButtons = document.querySelectorAll(`.mode-btn[data-parent="${parentSectionId}"]`);
+                    // Récupérer les contenus de cette section
+                    const sectionContents = document.querySelectorAll(`#${parentSectionId}-cours, #${parentSectionId}-quiz`);
+
+                    // Reset les boutons de la section
+                    sectionButtons.forEach(b => {
+                        b.classList.remove('active', 'bg-white', 'text-indigo-600', 'shadow-sm');
+                        b.classList.add('text-slate-600', 'hover:bg-slate-300');
+                    });
+
+                    // Reset les contenus
+                    sectionContents.forEach(c => c.classList.remove('active'));
+
+                    // Activer le bouton cliqué
+                    btn.classList.add('active', 'bg-white', 'text-indigo-600', 'shadow-sm');
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-300');
+
+                    // Activer le bon contenu
+                    document.getElementById(`${parentSectionId}-${mode}`).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
